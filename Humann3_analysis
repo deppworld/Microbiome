@@ -1,0 +1,50 @@
+bowtie2/2.4.1(Installation as per https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
+metaphlan (Installation as per https://huttenhower.sph.harvard.edu/metaphlan)
+humann (Installation as per https://huttenhower.sph.harvard.edu/humann/)
+ 
+### Download reference database for MetaPhlAn4 and Humann as per tutorial and configure them:  
+Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/metaphlan
+metaphlan --install --bowtie2db /<database folder>
+
+humann_config --update database_folders nucleotide /path to directory/chocophlan/  
+humann_config --update database_folders protein /path to directory/uniref/
+
+#Default command 
+metaphlan input.fastq.gz --bowtie2out output.bowtie2.bz2 --nproc 24 --input_type fastq -o profiled_output.txt --index latest --bowtie2db /metadb_path_to_database
+
+HumAnn3
+Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/humann/
+
+humann --input input.fastq.gz --thread 48 --nucleotide-database /path to directory for nucleotide database chocophlan --output output_folder  
+#(*--nucleotide-database flag is optional if you are not configuring data base as above mention )
+
+#Starting with MetaPhlAn output
+humann --input input.fastq.gz --thread 48 --taxonomic-profile //path to directory/MetaPhlAn/results/metaphlan_abundance file profiled_xxx.txt --output output_folder_name
+
+################# Normalize the abundance output files
+
+humann_renorm_table --input genefamilies.tsv --output genefamilies_relab.tsv --units relab
+humann_join_tables --input $OUTPUT_DIR --output humann_2_genefamilies.tsv --file_name genefamilies_relab
+humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab
+
+#################LEfSe analysis 
+https://github.com/biobakery/biobakery/wiki/lefse#2-lefse--conda-docker-vm-
+
+Install with Conda: $ conda install -c bioconda lefse
+
+Run the following command to format the input file (xxx.txt). This will generate a file (hmp_aerobiosis_small.in). :
+
+$ lefse_format_input.py xxx.txt output.in -c 1 -s 2 -u 3 -o 1000000
+
+Run the following command, passing the file generated in the previous step as input. This will generate a file (xxx_yyy.res) consisting of LEfSe analysis results.:
+
+$ lefse_run.py output.in xxx_yyy.res
+
+Visualization
+To plot the results of the LEfSe analysis generated from the previous step, run the following command.:
+
+$ lefse_plot_res.py xxx_yyy.res xxx_small.png
+
+You may also choose to visualize the results in a Cladogram. Run the following command to generate the Cladogram figure. This will use the LEfSe results file generated previously.:
+
+$ lefse_plot_cladogram.py xxx_yyy.res xxx_small.cladogram.png --format png
