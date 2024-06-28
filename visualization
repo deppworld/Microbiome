@@ -1,0 +1,95 @@
+################################### For dotplots
+Install ggplot in R
+library(ggplot2)
+library(reshape2)
+dat = melt(data1) #data1 is input file, melt will make a matrix of 4 column
+
+
+ggplot(data = dat,aes(x = Sample,group= Group ,  y = variable, colour = Group, size = value)) + 
+  geom_point() + xlab('Samples')+ theme_bw() + facet_grid(. ~Group , scales='free')
+
+################################### Heat-Tree
+Install metacoder as per instruction on https://grunwaldlab.github.io/metacoder_documentation/index.html
+
+install.packages("metacoder")
+install.packages("phyloseq")
+
+
+install.packages(c("vegan", "metacoder", "ggplot2", "dplyr", "readr", "stringr", "agricolae", "ape"),
+                 repos = "http://cran.rstudio.com",
+                 dependencies = TRUE)
+library(metacoder)
+library(readr) # Loads the readr package so we can use `read_tsv`
+library(dplyr)
+tax_data <- read.delim("taxonomy.txt")
+print(tax_data)
+tax_data$`OTU_ID` <- sub(tax_data$`OTU_ID`, # ` are needed because of the space
+                         pattern = "", replacement = "")
+
+
+sample_data <- read_tsv("NonResReturned_metadata.txt",
+                        col_types = "cccccccccccccccc") 
+print(sample_data)
+obj <- parse_tax_data(table_NreR,
+                      class_cols = "Taxonomy", # The column in the input table
+                      class_sep = ";") # What each taxon is seperated by
+
+print(obj)
+print(obj$data$tax_data)
+obj <- parse_tax_data(table_NreR,
+                      class_cols = "Taxonomy",
+                      class_sep = ";",
+                      class_regex = "^([a-z]{0,1})_{0,2}(.*)$",
+                      class_key = c("tax_rank" = "taxon_rank", "name" = "taxon_name"))
+
+head(taxon_names(obj))
+
+obj$data$class_data
+head(taxon_ranks(obj))
+obj$data$class_data <- NULL
+names(obj$data) <- "otu_counts"
+print(obj)
+obj <- filter_taxa(obj, taxon_names != "")
+
+print(obj)
+head(taxon_names(obj))
+head(all_names(obj), 20)
+length(all_names(obj))
+
+obj <- filter_taxa(obj, taxon_names == "Bacteria", subtaxa = TRUE)
+print(obj)
+filter_taxa(obj, taxon_names == "Bacteria")
+obj$data$otu_counts <- obj$data$otu_counts[c("taxon_id", "OTU_ID", sample_data$"sampleid")]
+print(obj)
+has_no_reads <- rowSums(obj$data$otu_counts[, sample_data$"sampleid"]) == 0
+sum(has_no_reads)
+filter_obs(obj, "otu_counts", ! has_no_reads)
+
+obj <- filter_obs(obj, "otu_counts", ! has_no_reads, drop_taxa = TRUE)
+print(obj)
+obj %>% 
+  filter_taxa(grepl(pattern = "^[a-zA-Z]+$", taxon_names)) %>% # remove "odd" taxa
+  filter_taxa(taxon_ranks == "g", supertaxa = TRUE) %>% # subset to the order rank
+  heat_tree(node_label = gsub(pattern = "\\[|\\]", replacement = "", taxon_names),
+            node_size = n_obs,
+            node_color = n_obs,
+            node_color_axis_label = "OTU count",
+            layout = "davidson-harel", initial_layout = "reingold-tilford")
+heat_tree(obj)
+heat_tree(obj,
+          node_label = taxon_names,
+          node_size = n_obs,
+          node_color = n_obs)
+obj %>%
+  filter_taxa(grepl(pattern = "^[a-zA-Z]+$", taxon_names)) %>% # remove "odd" taxa
+  filter_taxa(taxon_ranks == "g", supertaxa = TRUE) %>% # subset to the class rank
+  heat_tree(node_label = taxon_names,
+            node_size = n_obs,
+            node_color = n_obs,
+            node_color_range = c("red", "yellow", "green", "blue", "cyan", "pink", "magenta"),
+            initial_layout = "re", layout = "da",
+            title = "Non-Responders Returned",
+            node_color_axis_label = "Sum of root reads",
+            node_size_axis_label = "Number of OTUs",
+            output_file = "plot_example.pdf")
+
