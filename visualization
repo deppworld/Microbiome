@@ -92,4 +92,5 @@ obj %>%
             node_color_axis_label = "Sum of root reads",
             node_size_axis_label = "Number of OTUs",
             output_file = "plot_example.pdf")
-
+##################### Krona multi-layered pie charts(sunburst plot).
+https://github.com/marbl/Krona/wiki
