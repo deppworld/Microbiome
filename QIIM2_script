@@ -1,0 +1,89 @@
+################################QC: Fastqc
+ fastqc input.fasq.gz
+
+################################Trimming of reads: Trimmomatic
+java  -jar /home/dverma2/Trimmomatic-0.39/trimmomatic-0.39.jar SE -phred33 input.fastq.gz Trim_output.fastq.gz ILLUMINACLIP:TruSeq3-SE:2:30:10 LEADING:5 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:30
+
+############################### Microbiome analysis
+#QIIME2 (Version-2023.5) installation can be done in a few simple steps. Start by visiting https://qiime2.org/ and following the instructions provided there.
+QIIME-mOTU plugin as per https://github.com/motu-tool/q2-mOTUs
+Tutorial: https://github.com/motu-tool/q2-mOTUs/tree/main/tutorial
+Import of sample: all fastq.gz files should be in the same folder, and manifest file have all the sample information
+
+conda activate qiime2-2023.5
+qiime tools import --type 'SampleData[SequencesWithQuality]' --input-path manifest_file.txt --output-path single-end-demux.qza --input-format SingleEndFastqManifestPhred33V2
+qiime motus profile --i-samples single-end-demux.qza --p-threads 32 --p-marker-gene-cutoff 9 --o-table motu-table.qza --o-taxonomy motu--taxonomy.qza
+# A table of the counts of gene markers in samples.
+# A full taxonomy for each of the gene marker.
+#(Optional) Summary visualization: 
+qiime feature-table summarize --i-table motu-table.qza --o-visualization motu-table-summary.qzv
+##################################Bar plots:
+qiime taxa barplot --i-table motu-table.qza --i-taxonomy motu--taxonomy.qza --m-metadata-file SampleGroupBase_metadata.txt --o-visualization taxa-barplot.qzv
+#To view the barplot, drag and drop taxa-barplot.qzv to https://view.qiime2.org/ and save custom figures as per requirements on the 1-7 taxonomy level.
+##################################Hypothesis testing:
+#calculate alpha diversity
+*shannon
+qiime diversity alpha --i-table motu-table.qza --p-metric shannon --o-alpha-diversity observed_otus_vector_alpha_shannon.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_shannon.qza --m-metadata-file SampleGroupBase.txt  --o-visualization shannon.qzv
+*chao1
+qiime diversity alpha --i-table motu-table.qza --p-metric chao1 --o-alpha-diversity observed_otus_vector_alpha_chao1.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_chao1.qza --m-metadata-file SampleGroupBase.txt  --o-visualization chao1.qzv
+*fisheralpha
+qiime diversity alpha --i-table motu-table.qza --p-metric fisher_alpha --o-alpha-diversity observed_otus_vector_alpha_fisheralpha.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_fisheralpha.qza --m-metadata-file SampleGroupBase.txt  --o-visualization fisheralpha.qzv
+*dominance
+qiime diversity alpha --i-table motu-table.qza --p-metric dominance --o-alpha-diversity observed_otus_vector_alpha_dominance.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_dominance.qza --m-metadata-file SampleGroupBase.txt  --o-visualization dominance.qzv
+*berger parker d richness
+qiime diversity alpha --i-table motu-table.qza --p-metric berger_parker_d --o-alpha-diversity observed_otus_vector_alpha_berger_parker_d_richness.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_berger_parker_d_richness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization berger_parker_d_richness.qzv
+*heip_e_eveness
+qiime diversity alpha --i-table motu-table.qza --p-metric heip_e --o-alpha-diversity observed_otus_vector_alpha_heip_e_eveness.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_heip_e_eveness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization heip_e_eveness.qzv
+*simpson_e_eveness
+qiime diversity alpha --i-table motu-table.qza --p-metric simpson_e --o-alpha-diversity observed_otus_vector_alpha_simpson_e_eveness.qza
+qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_simpson_e_eveness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization simpson_e_eveness.qzv
+
+#calculatebeta diversity
+*jensenshannon
+qiime diversity beta --i-table motu-table.qza --p-metric jensenshannon --o-distance-matrix jensen_shannon-distances.qza
+qiime diversity beta-group-significance --i-distance-matrix jensen_shannon-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization jensen_shannon-distances-distances_Group.qzv
+qiime diversity beta-group-significance --i-distance-matrix jensen_shannon-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization jensen_shannon-distances_Recruitment.qzv
+qiime diversity pcoa --i-distance-matrix jensen_shannon-distances.qza --o-pcoa jensen_shannon-pcoa.qza
+qiime emperor plot --i-pcoa jensen_shannon-pcoa.qza --m-metadata-file SampleGroupBase.txt --o-visualization jensen_shannon-emperor.qzv
+*braycurtis
+qiime diversity beta --i-table motu-table.qza --p-metric braycurtis --o-distance-matrix braycurtis-distances.qza
+qiime diversity beta-group-significance --i-distance-matrix braycurtis-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization braycurtis-distances_Group.qzv
+qiime diversity beta-group-significance --i-distance-matrix braycurtis-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization braycurtis-distances_Recruitment.qzv
+qiime diversity pcoa --i-distance-matrix braycurtis-distances.qza --o-pcoa braycurtis-pcoa.qza
+qiime emperor plot --i-pcoa braycurtis-pcoa.qza --m-metadata-file SampleGroupBase.txt --o-visualization braycurtis-emperor.qzv
+*correlation
+qiime diversity beta --i-table motu-table.qza --p-metric correlation --o-distance-matrix correlation-distances.qza
+qiime diversity beta-group-significance --i-distance-matrix correlation-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization correlation-distances_Group.qzv
+qiime diversity beta-group-significance --i-distance-matrix correlation-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization correlation-distances_Recruitment.qzv
+qiime diversity pcoa --i-distance-matrix correlation-distances.qza --o-pcoa correlation-pcoa.qza
+qiime emperor plot --i-pcoa correlation.qza --m-metadata-file SampleGroupBase.txt --o-visualization correlation-emperor.qzv
+*jaccard
+qiime diversity beta --i-table motu-table.qza --p-metric jaccard --o-distance-matrix jaccard-distances.qza
+qiime diversity beta-group-significance --i-distance-matrix jaccard-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization jaccard-distances_Group.qzv
+qiime diversity beta-group-significance --i-distance-matrix jaccard-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization jaccard-distances_Recruitment.qzv
+qiime diversity pcoa --i-distance-matrix jaccard-distances.qza --o-pcoa jc-pcoa.qza
+qiime emperor plot --i-pcoa jaccard-pcoa.qza --m-metadata-file SampleGroupBase.txt --o-visualization jaccard-emperor.qzv
+################################Creating a distance matrix
+qiime diversity beta --i-table motu-table.qza --p-metric braycurtis --o-distance-matrix SGB_bc-distances.qza
+#Conducting a test
+qiime diversity beta-group-significance --i-distance-matrix SGB_bc-distances.qza --m-metadata-file Sample --m-metadata-column Group --o-visualization SGB_bc-distances-Group.qzv
+# To visualisation output matrix can be plot through any heatmap tool
+################################PCoA Analysis:
+#Calculating PCoA
+qiime diversity pcoa --i-distance-matrix bc-distances.qza --o-pcoa bc-pcoa.qza
+#visualize PCoA emperor plot:
+qiime emperor plot --i-pcoa bc-pcoa.qza --m-metadata-file metadata.txt --o-visualization bc-emperor.qzv
+#Drag and drop bc-emperor.qzv on https://view.qiime2.org/ and save custom figure as per requirement
+##################################Heatmap:
+qiime feature-table heatmap --i-table taxatable.qza --o-visualization taxatable.qzv
+#To produce heatmap on multiple level motu-table file need to be collapsed upto desire level ex level 6:
+qiime taxa collapse -–i-table motu-table.qza -–i-taxonomy motu-taxonomy.qza –-p-level 6 –-o-collapsed-table table_collapse6.qza
+qiime feature-table heatmap --i-table table_collapse6.qza --o-visualization taxatable.qzv
+Drag and drop the qzv-output file on https://view.qiime2.org/ and save the custom figure as required.
+
