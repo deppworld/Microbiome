@@ -1,6 +1,6 @@
 bowtie2/2.4.1(Installation as per https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
-metaphlan (Installation as per https://huttenhower.sph.harvard.edu/metaphlan)
-humann (Installation as per https://huttenhower.sph.harvard.edu/humann/)
+metaphlan (Installation as per https://huttenhower.sph.harvard.edu/metaphlan) ; $ pip install metaphlan
+humann (Installation as per https://huttenhower.sph.harvard.edu/humann/) ; $ pip install humann
  
 ### Download reference database for MetaPhlAn4 and Humann as per tutorial and configure them:  
 Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/metaphlan
@@ -11,6 +11,10 @@ humann_config --update database_folders protein /path to directory/uniref/
 
 #Default command 
 metaphlan input.fastq.gz --bowtie2out output.bowtie2.bz2 --nproc 24 --input_type fastq -o profiled_output.txt --index latest --bowtie2db /metadb_path_to_database
+
+########### Merging MetaPhlAn profiles
+merge_metaphlan_tables.py *_profile.txt > merged_abundance_table.txt
+
 
 HumAnn3
 Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/humann/
@@ -23,9 +27,9 @@ humann --input input.fastq.gz --thread 48 --taxonomic-profile //path to director
 
 ################# Normalize the abundance output files
 
-humann_renorm_table --input genefamilies.tsv --output genefamilies_relab.tsv --units relab
-humann_join_tables --input $OUTPUT_DIR --output humann_2_genefamilies.tsv --file_name genefamilies_relab
-humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab
+humann_renorm_table --input genefamilies.tsv --output genefamilies_relab.tsv --units relab  ##### normlize the files
+humann_join_tables --input $OUTPUT_DIR --output humann_2_genefamilies.tsv --file_name genefamilies_relab  ##### join all output files into one ; keep all file in one output directory separate for genefamily
+humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab ##### join all output files into one ; keep all file in one output directory separate for pathabundance
 
 #################LEfSe analysis 
 https://github.com/biobakery/biobakery/wiki/lefse#2-lefse--conda-docker-vm-
