@@ -29,7 +29,7 @@ humann --input input.fastq.gz --thread 48 --taxonomic-profile //path to director
 
 humann_renorm_table --input genefamilies.tsv --output genefamilies_relab.tsv --units relab  ##### normlize the files
 humann_join_tables --input $OUTPUT_DIR --output humann_2_genefamilies.tsv --file_name genefamilies_relab  ##### join all output files into one ; keep all file in one output directory separate for genefamily --file_name will be identifier of individual file (name)
-humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab ##### join all output files into one ; keep all file in one output directory separate for pathabundance
+humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab ##### join all output files into one ; keep all file in one output directory separate for pathabundance --file_name will be identifier of individual file (name)
 
 #################LEfSe analysis 
 https://github.com/biobakery/biobakery/wiki/lefse#2-lefse--conda-docker-vm-
