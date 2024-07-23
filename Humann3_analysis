@@ -55,3 +55,50 @@ $ lefse_plot_res.py xxx_yyy.res xxx_small.png
 You may also choose to visualize the results in a Cladogram. Run the following command to generate the Cladogram figure. This will use the LEfSe results file generated previously.:
 
 $ lefse_plot_cladogram.py xxx_yyy.res xxx_small.cladogram.png --format png
+#########################################################################
+
+################# Maaslin ########## 
+#### Installation : https://github.com/biobakery/biobakery/wiki/maaslin2 ######3
+
+
+if(!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("Maaslin2")
+
+##### If warning message comes : check the version####
+BiocManager::install(version = "3.10")
+
+
+BiocManager::install("Maaslin2")
+
+library(Maaslin2)
+
+df_input_data = read.table(file             = "maaslin_coin_trans.txt",
+                           header           = TRUE,
+                           sep              = "\t",
+                           row.names        = 1,
+                           stringsAsFactors = FALSE)
+
+df_input_data[1:5, 1:5]
+
+df_input_metadata = read.table(file             = "coin_metadata.txt",
+                           header           = TRUE,
+                           sep              = "\t",
+                           row.names        = 1,
+                           stringsAsFactors = FALSE)
+
+df_input_metadata[1:2,]
+fit_data = Maaslin2(input_data     = df_input_data,
+                    input_metadata = df_input_metadata,
+                    min_prevalence = 0,
+                    normalization  = "NONE",
+                    output         = "Grp_Res_output", #output folder name
+                    fixed_effects  = c("Group"), # column for the group  
+                    reference      = c("Group,Respo"))      ##### Reference name in Group column ex: Respo#
+
+
+
+
+
+
+
