@@ -1,5 +1,5 @@
 ################################QC: Fastqc
- fastqc input.fasq.gz
+ fastqc input.fastq.gz
 
 ################################Trimming of reads: Trimmomatic
 java  -jar /home/dverma2/Trimmomatic-0.39/trimmomatic-0.39.jar SE -phred33 input.fastq.gz Trim_output.fastq.gz ILLUMINACLIP:TruSeq3-SE:2:30:10 LEADING:5 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:30
@@ -22,48 +22,48 @@ qiime taxa barplot --i-table motu-table.qza --i-taxonomy motu--taxonomy.qza --m-
 #To view the barplot, drag and drop taxa-barplot.qzv to https://view.qiime2.org/ and save custom figures as per requirements on the 1-7 taxonomy level.
 ##################################Hypothesis testing:
 #calculate alpha diversity
-*shannon
+#*shannon
 qiime diversity alpha --i-table motu-table.qza --p-metric shannon --o-alpha-diversity observed_otus_vector_alpha_shannon.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_shannon.qza --m-metadata-file SampleGroupBase.txt  --o-visualization shannon.qzv
-*chao1
+#*chao1
 qiime diversity alpha --i-table motu-table.qza --p-metric chao1 --o-alpha-diversity observed_otus_vector_alpha_chao1.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_chao1.qza --m-metadata-file SampleGroupBase.txt  --o-visualization chao1.qzv
-*fisheralpha
+#*fisheralpha
 qiime diversity alpha --i-table motu-table.qza --p-metric fisher_alpha --o-alpha-diversity observed_otus_vector_alpha_fisheralpha.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_fisheralpha.qza --m-metadata-file SampleGroupBase.txt  --o-visualization fisheralpha.qzv
-*dominance
+#*dominance
 qiime diversity alpha --i-table motu-table.qza --p-metric dominance --o-alpha-diversity observed_otus_vector_alpha_dominance.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_dominance.qza --m-metadata-file SampleGroupBase.txt  --o-visualization dominance.qzv
-*berger parker d richness
+#*berger parker d richness
 qiime diversity alpha --i-table motu-table.qza --p-metric berger_parker_d --o-alpha-diversity observed_otus_vector_alpha_berger_parker_d_richness.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_berger_parker_d_richness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization berger_parker_d_richness.qzv
-*heip_e_eveness
+#*heip_e_eveness
 qiime diversity alpha --i-table motu-table.qza --p-metric heip_e --o-alpha-diversity observed_otus_vector_alpha_heip_e_eveness.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_heip_e_eveness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization heip_e_eveness.qzv
-*simpson_e_eveness
+#*simpson_e_eveness
 qiime diversity alpha --i-table motu-table.qza --p-metric simpson_e --o-alpha-diversity observed_otus_vector_alpha_simpson_e_eveness.qza
 qiime diversity alpha-group-significance --i-alpha-diversity observed_otus_vector_alpha_simpson_e_eveness.qza --m-metadata-file SampleGroupBase.txt  --o-visualization simpson_e_eveness.qzv
 
 #calculatebeta diversity
-*jensenshannon
+#*jensenshannon
 qiime diversity beta --i-table motu-table.qza --p-metric jensenshannon --o-distance-matrix jensen_shannon-distances.qza
 qiime diversity beta-group-significance --i-distance-matrix jensen_shannon-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization jensen_shannon-distances-distances_Group.qzv
 qiime diversity beta-group-significance --i-distance-matrix jensen_shannon-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization jensen_shannon-distances_Recruitment.qzv
 qiime diversity pcoa --i-distance-matrix jensen_shannon-distances.qza --o-pcoa jensen_shannon-pcoa.qza
 qiime emperor plot --i-pcoa jensen_shannon-pcoa.qza --m-metadata-file SampleGroupBase.txt --o-visualization jensen_shannon-emperor.qzv
-*braycurtis
+#*braycurtis
 qiime diversity beta --i-table motu-table.qza --p-metric braycurtis --o-distance-matrix braycurtis-distances.qza
 qiime diversity beta-group-significance --i-distance-matrix braycurtis-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization braycurtis-distances_Group.qzv
 qiime diversity beta-group-significance --i-distance-matrix braycurtis-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization braycurtis-distances_Recruitment.qzv
 qiime diversity pcoa --i-distance-matrix braycurtis-distances.qza --o-pcoa braycurtis-pcoa.qza
 qiime emperor plot --i-pcoa braycurtis-pcoa.qza --m-metadata-file SampleGroupBase.txt --o-visualization braycurtis-emperor.qzv
-*correlation
+#*correlation
 qiime diversity beta --i-table motu-table.qza --p-metric correlation --o-distance-matrix correlation-distances.qza
 qiime diversity beta-group-significance --i-distance-matrix correlation-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization correlation-distances_Group.qzv
 qiime diversity beta-group-significance --i-distance-matrix correlation-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization correlation-distances_Recruitment.qzv
 qiime diversity pcoa --i-distance-matrix correlation-distances.qza --o-pcoa correlation-pcoa.qza
 qiime emperor plot --i-pcoa correlation.qza --m-metadata-file SampleGroupBase.txt --o-visualization correlation-emperor.qzv
-*jaccard
+#*jaccard
 qiime diversity beta --i-table motu-table.qza --p-metric jaccard --o-distance-matrix jaccard-distances.qza
 qiime diversity beta-group-significance --i-distance-matrix jaccard-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Group --o-visualization jaccard-distances_Group.qzv
 qiime diversity beta-group-significance --i-distance-matrix jaccard-distances.qza --m-metadata-file SampleGroupBase.txt --m-metadata-column Recruitment --o-visualization jaccard-distances_Recruitment.qzv
