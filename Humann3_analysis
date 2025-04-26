@@ -1,11 +1,4 @@
 
-#################################################################################################
-bowtie2/2.4.1(Installation as per https://bowtie-bio.sourceforge.net/bowtie2/manual.shtml)
-metaphlan (Installation as per https://huttenhower.sph.harvard.edu/metaphlan) ; $ pip install metaphlan
-humann (Installation as per https://huttenhower.sph.harvard.edu/humann/) ; $ pip install humann
- ################################################################################################
-### Download reference database for MetaPhlAn4 and Humann as per tutorial and configure them:####
-###Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/metaphlan###
 
 metaphlan --install --bowtie2db /<database folder>
 
@@ -20,7 +13,7 @@ merge_metaphlan_tables.py *_profile.txt > merged_abundance_table.txt
 
 
 ####################HumAnn3###########################
-Installation as per instructions mentioned on https://huttenhower.sph.harvard.edu/humann/
+
 
 humann --input input.fastq.gz --thread 48 --nucleotide-database /path to directory for nucleotide database chocophlan --output output_folder  
 #(*--nucleotide-database flag is optional if you are not configuring data base as above mention )
@@ -35,7 +28,7 @@ humann_join_tables --input $OUTPUT_DIR --output humann_2_genefamilies.tsv --file
 humann_join_tables --input $OUTPUT_DIR --output humann_4_pathabundance.tsv --file_name pathabundance_relab ##### join all output files into one ; keep all file in one output directory separate for pathabundance --file_name will be identifier of individual file (name)
 
 #################LEfSe analysis #########################
-https://github.com/biobakery/biobakery/wiki/lefse#2-lefse--conda-docker-vm-
+
 
 Install with Conda: $ conda install -c bioconda lefse
 
@@ -48,7 +41,7 @@ Run the following command, passing the file generated in the previous step as in
 $ lefse_run.py output.in xxx_yyy.res
 
 ####Visualization ###################################################
-To plot the results of the LEfSe analysis generated from the previous step, run the following command.:
+
 
 $ lefse_plot_res.py xxx_yyy.res xxx_small.png
 
@@ -57,8 +50,6 @@ You may also choose to visualize the results in a Cladogram. Run the following c
 $ lefse_plot_cladogram.py xxx_yyy.res xxx_small.cladogram.png --format png
 #########################################################################
 
-################# Maaslin ########## 
-#### Installation : https://github.com/biobakery/biobakery/wiki/maaslin2 ######3
 
 if(!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
