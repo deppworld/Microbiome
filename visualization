@@ -2,14 +2,14 @@
 Install ggplot in R
 library(ggplot2)
 library(reshape2)
-dat = melt(data1) #data1 is input file, melt will make a matrix of 4 column
+dat = melt(data1) #
 
 
 ggplot(data = dat,aes(x = Sample,group= Group ,  y = variable, colour = Group, size = value)) + 
   geom_point() + xlab('Samples')+ theme_bw() + facet_grid(. ~Group , scales='free')
 
 ################################### Heat-Tree
-Install metacoder as per instruction on https://grunwaldlab.github.io/metacoder_documentation/index.html
+
 
 install.packages("metacoder")
 install.packages("phyloseq")
@@ -19,7 +19,7 @@ install.packages(c("vegan", "metacoder", "ggplot2", "dplyr", "readr", "stringr",
                  repos = "http://cran.rstudio.com",
                  dependencies = TRUE)
 library(metacoder)
-library(readr) # Loads the readr package so we can use `read_tsv`
+library(readr) 
 library(dplyr)
 tax_data <- read.delim("taxonomy.txt")
 print(tax_data)
@@ -92,5 +92,4 @@ obj %>%
             node_color_axis_label = "Sum of root reads",
             node_size_axis_label = "Number of OTUs",
             output_file = "plot_example.pdf")
-##################### Krona multi-layered pie charts(sunburst plot).
-https://github.com/marbl/Krona/wiki
+
