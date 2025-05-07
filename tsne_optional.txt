@@ -1,0 +1,25 @@
+
+
+# optional script to change colour in MICOM t-SNE Niche plot
+custom_palette = {
+    'Respo': '#1f77b4',      # blue
+    'Non-Resp': '#ff7f0e'    # orange
+}
+
+sns.scatterplot(
+    data=merged,
+    x='tsne-1',
+    y='tsne-2',
+    hue='Group',
+    style='Recruitment',
+    palette=custom_palette,
+    s=80
+)
+
+
+
+
+To find more color codes or palettes, you can use seaborn's built-in ones:
+
+import seaborn as sns
+print(sns.color_palette().as_hex())
