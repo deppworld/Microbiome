@@ -10,7 +10,7 @@ annot = pd.read_csv("annotations.csv")
 df = flux.merge(annot, on="reaction", how="left")
 
 #Filter for SCFAs
-scfa_names = ['acetate', 'propionate', 'butyrate', 'isobutyrate', 'valerate', 'isovalerate']
+scfa_names = ['acetate', 'propionate', 'butyrate', 'isobutyrate', 'valerate', 'isovalerate', 'caproate']
 df_scfa = df[df['name'].str.contains('|'.join(scfa_names), case=False, na=False)]
 
 #Keep only secreted SCFAs
